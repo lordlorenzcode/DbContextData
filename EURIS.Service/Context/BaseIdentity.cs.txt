@@ -1,0 +1,96 @@
+﻿
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Linq.Expressions;
+
+namespace EURIS.Service.Context
+{
+    public class BaseIdentity<TUser> where TUser : class
+    {
+        internal EURISDbContext context;
+        internal DbSet<TUser> dbSet;
+
+        public BaseIdentity(EURISDbContext context)
+        {
+            this.context = context;
+            dbSet = context.Set<TUser>();
+            
+        }
+
+
+        public virtual IEnumerable<TUser> Get(
+            Expression<Func<TUser, bool>> filter = null,
+            Func<IQueryable<TUser>, IOrderedQueryable<TUser>> orderBy = null,
+            string includeProperties = "")
+        {
+            IQueryable<TUser> query = dbSet;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return orderBy(query).ToList();
+            }
+            else
+            {
+                return query.ToList();
+            }
+        }
+
+        public virtual TUser GetById(int id)
+        {
+            return dbSet.Find(id);
+        }
+
+        public virtual void Insert(TUser entity)
+        {
+            dbSet.Add(entity);
+        }
+
+        public virtual void Delete(object id)
+        {
+            TUser entityToDelete = dbSet.Find(id);
+            Delete(entityToDelete);
+        }
+        public virtual void Delete(TUser entityToDelete)
+        {
+            if (context.Entry(entityToDelete).State == EntityState.Detached)
+            {
+                dbSet.Attach(entityToDelete);
+            }
+            dbSet.Remove(entityToDelete);
+        }
+
+        public virtual void Update(TUser entityToUpdate)
+        {
+            dbSet.Attach(entityToUpdate);
+            context.Entry(entityToUpdate).State = EntityState.Modified;
+        }
+
+        public virtual IEnumerable<TUser> GetWithRawSql(string query, params object[] parameters)
+        {
+            return dbSet.FromSql(query, parameters).ToList();
+        }
+
+        public IQueryable<TUser> SearchFor(Expression<Func<TUser, bool>> predicate)
+        {
+            return dbSet.Where(predicate);
+        }
+
+        public IQueryable<TUser> GetAll()
+        {
+            return dbSet;
+        }
+    }
+}

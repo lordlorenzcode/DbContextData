@@ -1,0 +1,62 @@
+﻿@model EURISTest.Models.CatalogModels
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<style>
+    label {
+        font-size: 18px;
+        font-weight: bold;
+        color: darkblue;
+        padding-right: 30px;
+    }
+    input {
+        background: transparent;
+        width: 10px;
+        border: none;
+        font-weight: bold;
+    }
+</style>
+
+<h2>Details</h2>
+
+@Html.HiddenFor(model => model.catalog.Id)
+<table>
+    <tr>
+        <th><label>Code: </label></th>
+        <td>@Model.catalog.Code</td>
+    </tr>
+    <tr>
+        <th><label>Description: </label></th>
+        <td>@Model.catalog.Description</td>
+    </tr>
+</table>
+
+<h3>Products</h3>
+
+<table>
+    <tr>
+        <td>Id</td>
+        <td>Code</td>
+        <td>Description</td>
+    </tr>
+    @{
+ 
+        foreach (var item in Model._SelectedProducts)
+        {
+            if (item.Checked == 1)
+            {
+                <text>
+                    <tr>
+                        <td><input type="text" value="@item.Id" locked  /></td>
+                        <td><input type="text" value="@item.Code" style="width:150px;" locked/></td>
+                        <td><input type="text" value="@item.Description" style="width:500px;" locked/></td>
+                    </tr>
+                </text>
+            }
+            
+            }
+        }
+
+</table>

@@ -1,0 +1,25 @@
+﻿@model EURISTest.Models.CatalogModels
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+@using(Html.BeginForm("Create","catalog",FormMethod.Post))
+{
+
+    <table>
+        <tr>
+            <th>Code</th>
+            <td>@Html.EditorFor(model => model.catalog.Code)</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Html.EditorFor(model => model.catalog.Description)</td>
+        </tr>
+        <tr>
+            <td colspan="2"><button type="submit">Salva</button></td>
+        </tr>
+    </table>
+
+}

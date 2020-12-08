@@ -1,0 +1,71 @@
+﻿@model EURISTest.Models.CatalogModels
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<script>
+
+    function setValue() {
+        var chks = document.getElementsByClassName("chkcls");
+        for (i = 0; i < chks.length; i++) {
+            if (chks[i].checked == true) {
+                chks[i].value = "1";
+            } else {
+                chks[i].value = "0";
+            }
+        }
+    }
+
+
+</script>
+
+<h2>Edit</h2>
+@using (Html.BeginForm("Edit", "Catalog", FormMethod.Post))
+{
+    @Html.HiddenFor(model => model.catalog.Id)
+    <table>
+        <tr>
+            <th>Code</th>
+            <td>@Html.EditorFor(model => model.catalog.Code, new { @value = Model.catalog.Code })</td>
+        </tr>
+        <tr>
+            <th>Description</th>
+            <td>@Html.EditorFor(model => model.catalog.Description, new { @value = Model.catalog.Description })</td>
+        </tr>
+        <tr>
+            <td colspan="2"><button type="submit">Salva</button></td>
+        </tr>
+    </table>
+
+
+    <h3>Products</h3>
+
+    <table>
+        <tr>
+            <td></td>
+            <td>Id</td>
+            <td>Code</td>
+            <td>Description</td>
+        </tr>
+        @{
+            var counter = 0;
+            foreach (var item in Model._SelectedProducts)
+            {
+                var ischecked = item.Checked == 1 ? "checked" : "";
+                <text>
+                    <tr>
+                        <td><input class="chkcls" type="checkbox" value="@item.Checked" name="_SelectedProducts[@counter].Checked" @ischecked onclick="setValue()" /></td>
+                        <td><input type="text" value="@item.Id" name="_SelectedProducts[@counter].Id" locked style="background:transparent;width:10px;border:none;font-weight:bold;" /></td>
+                        <td><input type="text" value="@item.Code" name="_SelectedProducts[@counter].Code" style="width:150px;" /></td>
+                        <td><input type="text" value="@item.Description" name="_SelectedProducts[@counter].Description" style="width:500px;" /></td>
+                    </tr>
+                </text>
+                counter++;
+            }
+        }
+
+    </table>
+
+}
+

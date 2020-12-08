@@ -1,0 +1,139 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using EURIS.Service;
+using EURIS.Entities;
+using EURIS.Service.Repository;
+using EURIS.Entities.Entities;
+using EURISTest.Models;
+
+namespace EURISTest.Controllers
+{
+    public class CatalogController : Controller
+    {
+
+        private IContextRepository<Catalog> _catalog;
+
+        public CatalogController(IContextRepository<Catalog> catalog)
+        {
+            this._catalog = catalog;
+        }
+
+        public ActionResult Index()
+        {
+            CatalogModels model = new CatalogModels();
+
+            model.listOfCatalogs = this._catalog.GetAll();
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Details(int id)
+        {
+            CatalogModels model = new CatalogModels();
+
+            model.catalog = _catalog.GetById(id);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult Edit(int id)
+        {
+            CatalogModels model = new CatalogModels();
+
+            model.catalog = _catalog.GetById(id);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(CatalogModels model)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                Catalog catalog = _catalog.GetById(model.catalog.Id);
+
+                try
+                {
+
+                    if (model.catalog != null)
+                    {
+                        catalog.Code = model.catalog.Code;
+                        catalog.Description = model.catalog.Description;
+                        _catalog.Save();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    //...
+                }
+            }
+
+            return RedirectToAction("Index");
+
+        }
+
+        [HttpGet]
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Create(CatalogModels model)
+        {
+
+            if (ModelState.IsValid)
+            {
+
+                Catalog catalog = new Catalog();
+
+                try
+                {
+
+                    if (model.catalog != null)
+                    {
+                        catalog.Code = model.catalog.Code;
+                        catalog.Description = model.catalog.Description;
+                        _catalog.Insert(catalog);
+                        _catalog.Save();
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    //...
+                }
+            }
+
+            return RedirectToAction("Index");
+
+        }
+
+
+        public ActionResult Delete(int id)
+        {
+
+            try
+            {
+                Catalog catalog = _catalog.GetById(id);
+                _catalog.Delete(catalog);
+                _catalog.Save();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            return RedirectToAction("Index");
+        }
+        
+    }
+}
